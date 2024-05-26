@@ -14,7 +14,6 @@
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
-#include "RdCommon.h"
 #include "BiBS.h"
 #include "RdBsSignals.h"
 

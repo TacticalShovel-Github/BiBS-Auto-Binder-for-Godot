@@ -15,7 +15,6 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "BiBS.h"
-#include "RdBsSignals.h"
 
 /*
     |===================================================================================================|

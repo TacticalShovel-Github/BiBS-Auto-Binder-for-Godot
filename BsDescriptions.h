@@ -1,5 +1,5 @@
-#ifndef BS_UTILS_H
-#define BS_UTILS_H
+#ifndef BS_DESCRIPTION_H
+#define BS_DESCRIPTION_H
 
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/classes/object.hpp>

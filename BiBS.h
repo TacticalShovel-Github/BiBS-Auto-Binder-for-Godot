@@ -50,7 +50,6 @@ namespace Bs
     }
 
 
-
     #define BS_EXPORT(IDX,...)    BS_TAG(EXPORT,    BS_WRAP(Bs::symbol<IDX>()                           ),BS_WRAP(__VA_ARGS__))
     #define BS_SIGNAL_RX(IDX,...) BS_TAG(SIGNAL_RX, BS_WRAP(Bs::symbol<IDX>(),Bs::symbol<BS_SELF_TYPE>()),BS_WRAP(__VA_ARGS__))
     #define BS_SIGNAL_TX(IDX)     BS_TAG(SIGNAL_TX, BS_WRAP(Bs::symbol<IDX>()                           ),BS_WRAP(           ))

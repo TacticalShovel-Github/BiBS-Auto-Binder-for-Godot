@@ -30,23 +30,23 @@ For CMake, I don't know. You are better than me and now that's your problem.
 
 #### Help! The compiler is screaming template code at me and I don't know what to do!
 
-Step 1. Calm down and take a DEEP breath.
- &emsp; Please trust me, things aren't as dire as they look.
- &emsp; You probably made a tiny syntax error.
- &emsp; C++ Compilers are hilariously bad at logging template errors.
- &emsp; &emsp; The compiler is telling you every interpretation of your code it tried, and what was wrong with each one.
- &emsp; &emsp; About 95% of this logging should be ignored
-Step 2. Scroll up the top of the debug log.
- &emsp; The compiler will lie to you and say the problem is in BiBS.
- &emsp; While that may be morally true, on a technical basis, the problem is most likely in your code.
-Step 3. Look for line numbers in the debug log that actually refer to your class.
- &emsp; This will be a bit like an easter hunt.
- &emsp; The line numbers referring to `#include` statements will most likely lead you astray.
-Step 4. Once you have a line number referring to your class declaration, compare your code to the examples that come with BiBS.
- &emsp; Did you do anything differently?
- &emsp; Did you use a slightly different syntax, or declare things in a different way?
- &emsp; &emsp; BiBS prioritizes composability with C++, so there are many alternate ways to do things.
- &emsp; &emsp; If you are new to C++, stick to the syntax in the example until you learn the language better.
+Step 1. Calm down and take a DEEP breath.  
+ &emsp; Please trust me, things aren't as dire as they look.  
+ &emsp; You probably made a tiny syntax error.  
+ &emsp; C++ Compilers are hilariously bad at logging template errors.  
+ &emsp; &emsp; The compiler is telling you every interpretation of your code it tried, and what was wrong with each one.  
+ &emsp; &emsp; About 95% of this logging should be ignored  
+Step 2. Scroll up the top of the debug log.  
+ &emsp; The compiler will lie to you and say the problem is in BiBS.  
+ &emsp; While that may be morally true, on a technical basis, the problem is most likely in your code.  
+Step 3. Look for line numbers in the debug log that actually refer to your class.  
+ &emsp; This will be a bit like an easter hunt.  
+ &emsp; The line numbers referring to #include statements will most likely lead you astray.  
+Step 4. Once you have a line number referring to your class declaration, compare your code to the examples that come with BiBS.  
+ &emsp; Did you do anything differently?  
+ &emsp; Did you use a slightly different syntax, or declare things in a different way?  
+ &emsp; &emsp; BiBS prioritizes composability with C++, so there are many alternate ways to do things.  
+ &emsp; &emsp; If you are new to C++, stick to the syntax in the example until you learn the language better.  
  
 
 You may see certain statements that are, in fact, BiBS trying to tell you that you have made an error  

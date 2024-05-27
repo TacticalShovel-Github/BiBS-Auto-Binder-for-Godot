@@ -50,10 +50,10 @@ Step 4. Once you have a line number, compare your code with one of the examples.
  &emsp; &emsp; BiBS prioritizes composability with C++, so there are many alternate ways to do things.  
  &emsp; &emsp; If you are new to C++, stick to the syntax in the example until you learn the language better.  
 
-#### Note regarding MSVC debugging
+#### Note regarding MSVC debugging  
  &emsp; MSVC is very bad at giving useful error logging when templates and macros are involved.  
- &emsp; Unfortunately, both are heavily used in BiBS. 
- &emsp; 
+ &emsp; Unfortunately, both are heavily used in BiBS.  
+ &emsp;  
  &emsp; If you have frequent issues with template/macro compile errors, consider switching to GCC(MinGW for Windows users) or Clang.  
  
 
@@ -64,7 +64,7 @@ You may see certain statements that are, in fact, BiBS trying to tell you that y
  &emsp;  2.  `error: static assertion failed: "Parameter types for callback do not match the signal.` 
  &emsp; &emsp;  This message implies that the types on your signal handler do not match the signal it is bound to.  
 
-These are some other compiler errors to look out for, and what they mean
+These are some other compiler errors to look out for, and what they mean  
  &emsp; 1. error: incomplete type 'MyFirstBiBSClass::EXPORT<18446744073709551615, MyFirstBiBSClass>' used in nested name specifier  
  &emsp;  &emsp; Unlike attributes in C#, these attributes must appear AFTER the declaration that they are referencing.  
  &emsp;  &emsp; If you are seeing this message, it most likely means that that you did something like this..  
@@ -72,9 +72,9 @@ These are some other compiler errors to look out for, and what they mean
  &emsp;  &emsp; &emsp; // ERROR - You need to move 'myVariable' above 'BS_EXPORT'.  
  &emsp;  &emsp; &emsp; BS_EXPORT(&MyFirstBiBSClass::myVariable,.name="myVariable");   
  &emsp;  &emsp; &emsp; int myVariable = 0;   
- &emsp;  &emsp;
+ &emsp;  &emsp;  
 
-### Understanding the Syntax Guide 
+### Understanding the Syntax Guide  
 
 #### Placeholders
  Names appearing between verical bars are placeholders.  

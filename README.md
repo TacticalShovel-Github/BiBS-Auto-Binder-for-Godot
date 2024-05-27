@@ -24,7 +24,9 @@ For CMake, I don't know. You are better than me and now that's your problem.
 
 3. Godot 4.2+ is recommended.
 
-4. Conditionally, you may need a non-MSVC compiler. If MSVC is somehow able to compile these templates, I offer no assurances that it will continue to do so in future releases of BiBS.
+### Addendum on compiler support
+ &emsp; I have tested with GCC and MSVC. 
+ &emsp; &emsp; All C++20 compilers should be supported, but please let me know if you have found an exception. 
 
 ## Troubleshooting
 
@@ -42,18 +44,24 @@ Step 2. Scroll up the top of the debug log.
 Step 3. Look for line numbers in the debug log that actually refer to your class.  
  &emsp; This will be a bit like an easter hunt.  
  &emsp; The line numbers referring to #include statements will most likely lead you astray.  
-Step 4. Once you have a line number referring to your class declaration, compare your code to the examples that come with BiBS.  
+Step 4. Once you have a line number, compare your code with one of the examples.  
  &emsp; Did you do anything differently?  
  &emsp; Did you use a slightly different syntax, or declare things in a different way?  
  &emsp; &emsp; BiBS prioritizes composability with C++, so there are many alternate ways to do things.  
  &emsp; &emsp; If you are new to C++, stick to the syntax in the example until you learn the language better.  
+
+#### Note regarding MSVC debugging
+ &emsp; MSVC is very bad at giving useful error logging when templates and macros are involved.  
+ &emsp; Unfortunately, both are heavily used in BiBS. 
+ &emsp; 
+ &emsp; If you have frequent issues with template/macro compile errors, consider switching to GCC(MinGW for Windows users) or Clang.  
  
 
-You may see certain statements that are, in fact, BiBS trying to tell you that you have made an error  
+You may see certain statements that are, in fact, BiBS trying to tell you that you have made an error.  
  &emsp;  1. `error: static assertion failed: Could not locate index of tag member.`  
  &emsp; &emsp; Most likely on a signal, BiBS tried to lookup an exported member by pointer and could not find it.  
  &emsp; &emsp; This implies that you either forgot to export it, or exported the wrong member.  
- &emsp;  2.  error: static assertion failed: "Parameter types for callback do not match the signal";  
+ &emsp;  2.  `error: static assertion failed: "Parameter types for callback do not match the signal.` 
  &emsp; &emsp;  This message implies that the types on your signal handler do not match the signal it is bound to.  
 
 These are some other compiler errors to look out for, and what they mean
@@ -70,7 +78,7 @@ These are some other compiler errors to look out for, and what they mean
 
 #### Placeholders
  Names appearing between verical bars are placeholders.  
- &emsp; For instance, `void |FUNCTION_NAME|();` could refer equally to `void foo();` or `void bar()`.
+ &emsp; For instance, `void |FUNCTION_NAME|()` may resolve to either `int foo()` or `int bar()`, but not `void bar()` or `int foo`.
 
 #### Syntax Declaration
  `Syntax |DESIGNATOR|` declares `|DESIGNATOR|` as a symbol that may resolve to one or more expressions.  

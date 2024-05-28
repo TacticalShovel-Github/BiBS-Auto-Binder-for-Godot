@@ -1,7 +1,19 @@
-# BiBS-Auto-Binder-for-Godot
-
+# BiBS-Auto-Binder-for-Godot  
 
 This is a header only library that provides a better interface for C++ users to bind against godot to achieve feature parity with GdScript. We accomplish this through a mixture of hopes, prayers, templates, dark sacrifices, and coffee.
+
+## Supported Use Cases
+
+&emsp; 1. Export any data member in one line of code.  
+&emsp; &emsp; a. No more writing getters or setters.  
+&emsp; &emsp; b. No fussing around with variant enumerations  
+&emsp; &emsp; c. Automatically chooses the best property hints for your member type.  
+&emsp; 2. Export methods  
+&emsp;&emsp; a. No backreferencing of strings names - ever.  
+&emsp; 3. Integrate seamlessly to godot's signal system  
+&emsp; &emsp; a. Compile-time for correctness on all callable types.  
+&emsp; &emsp; b. Compile-time check for correctness on method callback name.  
+&emsp; &emsp; c. Connect signals in one line without any messy strings.  
 
 BiBS officially stands for *Binding is Baby Stuff*. However, don't allow the offical definition constrain your imagination in completing the acronym in other ways.
 
@@ -25,8 +37,9 @@ For CMake, I don't know. You are better than me and now that's your problem.
 3. Godot 4.2+ is recommended.
 
 ### Addendum on compiler support
- &emsp; I have tested with GCC and MSVC. 
- &emsp; &emsp; All C++20 compilers should be supported, but please let me know if you have found an exception. 
+ &emsp; BiBS has been tested with with GCC and MSVC.  
+ &emsp; Ideally, I want to support all C++20 compilers.
+ &emsp; Please let me know if you think your compiler isn't compatible.  
 
 ## Troubleshooting
 
@@ -61,7 +74,7 @@ You may see certain statements that are, in fact, BiBS trying to tell you that y
  &emsp;  1. `error: static assertion failed: Could not locate index of tag member.`  
  &emsp; &emsp; Most likely on a signal, BiBS tried to lookup an exported member by pointer and could not find it.  
  &emsp; &emsp; This implies that you either forgot to export it, or exported the wrong member.  
- &emsp;  2.  `error: static assertion failed: "Parameter types for callback do not match the signal.` 
+ &emsp;  2.  `error: static assertion failed: "Parameter types for callback do not match the signal.`  
  &emsp; &emsp;  This message implies that the types on your signal handler do not match the signal it is bound to.  
 
 These are some other compiler errors to look out for, and what they mean  

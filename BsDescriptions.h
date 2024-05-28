@@ -248,7 +248,6 @@ namespace Bs
 
         const char * name = DefaultName.label;
         const std::array<const std::string_view,numParams> args;
-        typename decltype(SYMBOL)::ArgTupleType defaultValues;
 
         template<typename T>
         consteval bool validate() const

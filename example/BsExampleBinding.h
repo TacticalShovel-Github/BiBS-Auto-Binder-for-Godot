@@ -5,7 +5,10 @@
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/Area3D.hpp>
-
+#include <godot_cpp/classes/input_event.hpp>
+#include <godot_cpp/classes/camera3d.hpp>
+#include <godot_cpp/variant/vector3.hpp>
+#include <godot_cpp/classes/ref.hpp>
 #include "BsExampleCommon.h"
 
 /*
@@ -87,10 +90,19 @@ class DataMemberBindingExample : public godot::Node
         Generally, if a type may be exported, it may also appear as a parameter on a method binding.
 */
 
+
 class MethodBindingExample : public godot::Node
 {
-     GDCLASS(MethodBindingExample, godot::Node) 
-     BSCLASS;
+    GDCLASS(MethodBindingExample, godot::Node) 
+    BSCLASS;
+     
+    void inputEventCb(
+        godot::Camera3D *camera,
+        const godot::Ref<godot::InputEvent> &evt,
+        const godot::Vector3 &pos,
+        const godot::Vector3 &nrm,
+        int32_t shp){}
+    BS_EXPORT(&MethodBindingExample::inputEventCb, .name="inputEvent", .args={"cam","evt","pos","nrm","shp"});
 
     static int namedStaticFunction(int dog, int cat){return 0;}
     BS_EXPORT(&MethodBindingExample::namedStaticFunction, .name="namedStaticFunction", .args={"dog","cat"});

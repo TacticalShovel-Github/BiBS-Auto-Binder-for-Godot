@@ -4,7 +4,7 @@
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
-#include <godot_cpp/classes/Area3D.hpp>
+#include <godot_cpp/classes/area3d.hpp>
 #include <godot_cpp/classes/input_event.hpp>
 #include <godot_cpp/classes/camera3d.hpp>
 #include <godot_cpp/variant/vector3.hpp>

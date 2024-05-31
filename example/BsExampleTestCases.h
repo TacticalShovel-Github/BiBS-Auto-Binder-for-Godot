@@ -9,7 +9,7 @@
 #define TESTING_STATIC_MEMBERS 1&&TESTING_BS
 
 
-#include <godot_cpp/classes/Area3D.hpp>
+#include <godot_cpp/classes/area3d.hpp>
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>

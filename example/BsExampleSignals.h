@@ -1,7 +1,7 @@
 #ifndef BS_EXAMPLE_SIGNALS_H
 #define BS_EXAMPLE_SIGNALS_H
 
-#include <godot_cpp/classes/Area3D.hpp>
+#include <godot_cpp/classes/area3d.hpp>
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>

@@ -53,7 +53,7 @@ class DataMemberBindingExample : public godot::Node
     bool third = 0.0;
     BS_EXPORT(&DataMemberBindingExample::first,.name="first");
     BS_EXPORT(&DataMemberBindingExample::second,.name="second");
-    BS_EXPORT(&DataMemberBindingExample::third,.name="second");
+    BS_EXPORT(&DataMemberBindingExample::third,.name="third");
 
    // Nodes are derived from godot::Object, so they may be exports.
    //     The type must appear as a pointer type.

@@ -1,22 +1,8 @@
 #ifndef BIBS_H
 #define BIBS_H
 
-#ifdef BS_DEV_LOCAL
-    //For my development, using my personal logging system.
-    namespace Bs {
-    using LogBS = Rd::LogAgent<Rd::label("bullshit.txt")>;
-    }
-#else
-namespace Bs
-{
-    struct PhonyLogAgent
-    {
-        template<typename ... Ts> static void write(const char * fmt, const Ts & ...args){}
-        template<typename ... Ts> static void writePartial(const char * fmt, const Ts & ...args){}
-    };
-    using LogBS = PhonyLogAgent;
-}
-#endif
+
+
 
 #include "BsDescriptions.h"
 

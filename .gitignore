@@ -36,3 +36,6 @@
 
 # Directories
 bin/
+
+# Logfiles
+BSLog.txt

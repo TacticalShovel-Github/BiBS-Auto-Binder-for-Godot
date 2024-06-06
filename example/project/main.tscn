@@ -4,10 +4,6 @@
 
 [sub_resource type="SphereMesh" id="SphereMesh_egsg0"]
 
-[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_1kfb5"]
-first = 1.19
-second = 1.12
-
 [sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_rc38e"]
 first = 5.0
 second = 10.0
@@ -17,6 +13,11 @@ first = 15.0
 second = 20.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_dlyo6"]
+
+[sub_resource type="Environment" id="Environment_srccd"]
+ambient_light_source = 2
+ambient_light_color = Color(0.921569, 0.921569, 0.921569, 1)
+reflected_light_source = 2
 
 [node name="root" type="Node3D"]
 
@@ -44,7 +45,6 @@ mouseDetector = NodePath("../MouseDetector")
 
 [node name="DataMemberBindingExample" type="DataMemberBindingExample" parent="PropertiesExample" node_paths=PackedStringArray("Area")]
 Area = NodePath("../Area3D")
-resourceMember = SubResource("ExampleResourceTuple_1kfb5")
 tupleArray = Array[ExampleResourceTuple]([SubResource("ExampleResourceTuple_rc38e"), SubResource("ExampleResourceTuple_g6cyy")])
 
 [node name="Area3D" type="Area3D" parent="PropertiesExample"]
@@ -67,3 +67,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.46322, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MethodsExample/MethodsArea"]
 shape = SubResource("SphereShape3D_dlyo6")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_srccd")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.853538, 0)
+text = "The Mouse Trap
+"

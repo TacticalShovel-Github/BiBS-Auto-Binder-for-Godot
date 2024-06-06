@@ -11,6 +11,7 @@
 #include <string_view>
 #include <format>
 #include <cassert>
+#include <fstream>
 
 namespace godot
 {
@@ -24,9 +25,11 @@ namespace godot
 
 #include <BsTemplateUtils.h>
 #include <BsMacroUtils.h>
+#include <BsMetaTypes.h>
+#include <BsLogging.h>
 #include <BsVariantUtils.h>
 #include <BsTagging.h>
-#include <BsMetaTypes.h>
+
 #include <BsSignal.h>
 #include <BsContainers.h>
 

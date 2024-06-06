@@ -1,8 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://spn77if5gfvf"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_syste"]
-
-[sub_resource type="SphereMesh" id="SphereMesh_egsg0"]
+[sub_resource type="Environment" id="Environment_srccd"]
+ambient_light_source = 2
+ambient_light_color = Color(0.921569, 0.921569, 0.921569, 1)
+reflected_light_source = 2
 
 [sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_rc38e"]
 first = 5.0
@@ -14,32 +15,15 @@ second = 20.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_dlyo6"]
 
-[sub_resource type="Environment" id="Environment_srccd"]
-ambient_light_source = 2
-ambient_light_color = Color(0.921569, 0.921569, 0.921569, 1)
-reflected_light_source = 2
+[sub_resource type="SphereShape3D" id="SphereShape3D_syste"]
 
-[node name="root" type="Node3D"]
+[sub_resource type="SphereMesh" id="SphereMesh_egsg0"]
+
+[node name="WorldEnvironment" type="WorldEnvironment"]
+environment = SubResource("Environment_srccd")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.01353)
-
-[node name="SignalExample" type="Node" parent="."]
-
-[node name="Area3D" type="Area3D" parent="SignalExample"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SignalExample/Area3D"]
-shape = SubResource("SphereShape3D_syste")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SignalExample/Area3D"]
-mesh = SubResource("SphereMesh_egsg0")
-skeleton = NodePath("../../..")
-
-[node name="MouseDetector" type="MouseDetector" parent="SignalExample" node_paths=PackedStringArray("MouseArea")]
-MouseArea = NodePath("../Area3D")
-
-[node name="MouseTrap" type="MouseTrap" parent="SignalExample" node_paths=PackedStringArray("mouseDetector")]
-mouseDetector = NodePath("../MouseDetector")
 
 [node name="PropertiesExample" type="Node" parent="."]
 
@@ -68,8 +52,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.46322, 0, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MethodsExample/MethodsArea"]
 shape = SubResource("SphereShape3D_dlyo6")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_srccd")
+[node name="SignalExample" type="Node" parent="."]
+
+[node name="Area3D" type="Area3D" parent="SignalExample"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SignalExample/Area3D"]
+shape = SubResource("SphereShape3D_syste")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SignalExample/Area3D"]
+mesh = SubResource("SphereMesh_egsg0")
+skeleton = NodePath("")
+
+[node name="MouseDetector" type="MouseDetector" parent="SignalExample" node_paths=PackedStringArray("MouseArea")]
+MouseArea = NodePath("../Area3D")
+
+[node name="MouseTrap" type="MouseTrap" parent="SignalExample" node_paths=PackedStringArray("mouseDetector")]
+mouseDetector = NodePath("../MouseDetector")
 
 [node name="Label3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.853538, 0)

@@ -81,6 +81,15 @@ class DataMemberBindingExample : public godot::Node
     // godot::TypedArray is derived from godot::Array, which is convertible to godot::Variant, so we may export it.
     godot::TypedArray<ExampleResourceTuple> tupleArray;
     BS_EXPORT(&DataMemberBindingExample::tupleArray,.name="tupleArray");
+
+    //Integer types can be given minimums and maximums.
+    int64_t boundedInt = 0;
+    BS_EXPORT(&DataMemberBindingExample::boundedInt,.name="boundedInt",.min=-3,.max=8);
+
+    //Floating point types can be given minimums and maximums.
+    float boundedFloat = 0.0f;
+    BS_EXPORT(&DataMemberBindingExample::boundedFloat,.name="boundedFloat",.min=-15.0f,.max=10.0f);
+
 };
 
 

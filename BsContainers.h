@@ -24,7 +24,12 @@ namespace Bs
             return value;
         }
 
-        constexpr Ternary(const T & other) : value(other.value), psuedoValue(PsuedoValue::PS_UNDEFINED)
+        constexpr Ternary(T && other) : value(other), psuedoValue(PsuedoValue::PS_UNDEFINED)
+        {
+            setPsuedoValue(PsuedoValue::PS_DEFINED);
+        }
+
+        constexpr Ternary(const T & other) : value(other), psuedoValue(PsuedoValue::PS_UNDEFINED)
         {
             setPsuedoValue(PsuedoValue::PS_DEFINED);
         }

@@ -255,9 +255,9 @@ namespace Bs
         BS_GD_DESCRIPTION_COMMON(SYMBOL);
         BS_GD_MEMBER_COMMON(SYMBOL);
         static constexpr const auto defaultIncrement = GetNth<0,0.01,1>::value;
-        const Ternary<ValueType> max = Ternary<ValueType>::UNDEFINED;
         const Ternary<ValueType> min = Ternary<ValueType>::UNDEFINED;
-        const typename GetNthType<std::is_floating_point_v<ValueType>,int,float>::type increment = GetNth<std::is_floating_point_v<ValueType>,0,0.1f>::value;
+        const Ternary<ValueType> max = Ternary<ValueType>::UNDEFINED;
+        const typename GetNthType<std::is_floating_point_v<ValueType>,float,float>::type increment = GetNth<std::is_floating_point_v<ValueType>,0.1f,0.01f>::value;
 
         void bindMethods() const
         {

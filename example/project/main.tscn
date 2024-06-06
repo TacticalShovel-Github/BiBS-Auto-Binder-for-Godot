@@ -1,0 +1,69 @@
+[gd_scene load_steps=7 format=3 uid="uid://spn77if5gfvf"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_syste"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_egsg0"]
+
+[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_1kfb5"]
+first = 1.19
+second = 1.12
+
+[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_rc38e"]
+first = 5.0
+second = 10.0
+
+[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_g6cyy"]
+first = 15.0
+second = 20.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_dlyo6"]
+
+[node name="root" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.01353)
+
+[node name="SignalExample" type="Node" parent="."]
+
+[node name="Area3D" type="Area3D" parent="SignalExample"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SignalExample/Area3D"]
+shape = SubResource("SphereShape3D_syste")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SignalExample/Area3D"]
+mesh = SubResource("SphereMesh_egsg0")
+skeleton = NodePath("../../..")
+
+[node name="MouseDetector" type="MouseDetector" parent="SignalExample" node_paths=PackedStringArray("MouseArea")]
+MouseArea = NodePath("../Area3D")
+
+[node name="MouseTrap" type="MouseTrap" parent="SignalExample" node_paths=PackedStringArray("mouseDetector")]
+mouseDetector = NodePath("../MouseDetector")
+
+[node name="PropertiesExample" type="Node" parent="."]
+
+[node name="DataMemberBindingExample" type="DataMemberBindingExample" parent="PropertiesExample" node_paths=PackedStringArray("Area")]
+Area = NodePath("../Area3D")
+resourceMember = SubResource("ExampleResourceTuple_1kfb5")
+tupleArray = Array[ExampleResourceTuple]([SubResource("ExampleResourceTuple_rc38e"), SubResource("ExampleResourceTuple_g6cyy")])
+
+[node name="Area3D" type="Area3D" parent="PropertiesExample"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.41315, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PropertiesExample/Area3D"]
+shape = SubResource("SphereShape3D_dlyo6")
+
+[node name="MethodsExample" type="Node" parent="."]
+
+[node name="ExportTester" type="ExportTester" parent="MethodsExample" node_paths=PackedStringArray("MouseArea1")]
+one = 8
+two = 1745503764
+MouseArea1 = NodePath("../MethodsArea")
+
+[node name="MethodBindingExample" type="MethodBindingExample" parent="MethodsExample"]
+
+[node name="MethodsArea" type="Area3D" parent="MethodsExample"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.46322, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MethodsExample/MethodsArea"]
+shape = SubResource("SphereShape3D_dlyo6")

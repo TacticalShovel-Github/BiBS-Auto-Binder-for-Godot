@@ -48,6 +48,9 @@ namespace Bs
     template<typename T, typename U>
     using IsSameBaseType = SIsSameBaseType<T,U>::value;
 
+    template<typename U, typename V> 
+    concept CIsSameBaseType = std::is_same_v<BaseType<U>,BaseType<V>>;
+
     /*
         Transform - Given T1 and T2, yield T2 regardless of the input T1.
     */
@@ -109,14 +112,12 @@ namespace Bs
         ForEachTupleHelper<std::tuple_size<T>::value, FNC_PTR_T, T>::exec(ptr, v1);
     }
 
-
     namespace Dt
     {
         template<unsigned ... digits>
-        struct Num2StrImpl_2 { static const char value[]; };
-
-        template<unsigned... digits>
-        constexpr char Num2StrImpl_2<digits...>::value[] = {('0' + digits)..., 0};
+        struct Num2StrImpl_2 {
+            static constexpr const char value[] = {('0' + digits)..., 0}; 
+        };
 
         //sumLeft not zero, keep adding digits to the parameter list
         template<unsigned sumLeft, unsigned... digits>
@@ -129,6 +130,13 @@ namespace Bs
 
     template<unsigned num>
     struct Num2Str : Dt::Num2StrImpl_1<num> {};
+
+    template<auto V1, auto V2> struct Max;
+    template<auto V1, auto V2> requires (V1 == V2) struct Max<V1,V2>{static constexpr const auto value = V1;};
+    template<auto V1, auto V2> requires (V1 >  V2) struct Max<V1,V2>{static constexpr const auto value = V1;};
+    template<auto V1, auto V2> requires (V1 <  V2) struct Max<V1,V2>{static constexpr const auto value = V2;};
+
+
 }
 
 

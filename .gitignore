@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# SCons Artifacts
+.sconsign.dblite
+
+# Directories
+bin/

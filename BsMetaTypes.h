@@ -1,6 +1,7 @@
 #ifndef BS_META_TYPES
 #define BS_META_TYPES
 
+
 namespace Bs
 {
     enum class EMetaType
@@ -14,15 +15,14 @@ namespace Bs
     */
     template<typename Sig> struct FunctionPointerType;
 
-    template<typename RET_T, typename...ARG_Ts>
+    template<typename RET_T, typename ... ARG_Ts>
     struct FunctionPointerType<RET_T (*)(ARG_Ts...)>
     {
         using PointerType = RET_T (*)(ARG_Ts...);
-    	using ReturnType = RET_T;
+    	typedef RET_T ReturnType;
         template<std::size_t I>
-        using ParamType = typename GetNthType<I,ARG_Ts ...>::type;
+        struct ParamType { typedef GetNthType<I,ARG_Ts ...>::type type; };
         static constexpr const std::size_t numParams = sizeof...(ARG_Ts);
-        static constexpr const EMetaType typeCode = EMetaType::FunctionPointer;
     };
 
     /*
@@ -34,17 +34,14 @@ namespace Bs
         using ValueType = T;
         using ClassType = C;
         using PointerType = ValueType ClassType::*;
-
-        static constexpr const EMetaType typeCode = EMetaType::MemberPointer;
     };
 
     #define BS_METHOD_POINTER_TYPE_COMMON \
         template<std::size_t I> \
-        using ParamType = typename GetNthType<I,ARG_Ts ...>::type; \
-        using ClassType = OBJ; \
-        using ReturnType = RET_T; \
+        struct ParamType { typedef GetNthType<I,ARG_Ts ...>::type type; }; \
+        typedef OBJ ClassType; \
+        typedef RET_T ReturnType; \
         static constexpr const std::size_t numParams = sizeof...(ARG_Ts); \
-        static constexpr const EMetaType typeCode = EMetaType::MethodPointer; \
         typedef std::tuple<ARG_Ts ...> ArgTupleType;
 
     template<typename Sig>
@@ -65,7 +62,7 @@ namespace Bs
 
 
 
-    template <std::size_t N>
+    template <size_t N>
     struct Literal
     {
         char label[N];
@@ -120,27 +117,34 @@ namespace Bs
     */
     template<auto V>
     struct FunctionPointer : public FunctionPointerType<decltype(V)> {
+        constexpr FunctionPointer(){}
+        constexpr FunctionPointer(const FunctionPointer<V> & other){}
+        constexpr FunctionPointer(FunctionPointer<V> && other){}
+        
         using MetaType = FunctionPointerType<decltype(V)>;
+        
         template<std::size_t I>
-        using ParamType = typename MetaType::ParamType<I>;
+        using ParamType = typename MetaType::template ParamType<I>::type;
+
         using ReturnType = typename MetaType::ReturnType;
         using PointerType = typename MetaType::PointerType;
-        static constexpr const std::size_t numParams = MetaType::numParams;
-        static constexpr const PointerType value = V;
+        static constexpr const std::size_t numParams = FunctionPointerType<decltype(V)>::numParams;
+        static constexpr PointerType value = V;
     };
 
     /*
         MethodPointer - Given the provided method pointer value, yield the description of that particular method pointer.
     */
     template <auto V> 
-    struct MethodPointer : public MethodPointerType<decltype(V)>
+    struct MethodPointer
     {
         constexpr MethodPointer(){}
         constexpr MethodPointer(const MethodPointer<V> & other){}
         constexpr MethodPointer(MethodPointer<V> && other){}
+
+        typedef MethodPointerType<decltype(V)> MetaType;
         template<std::size_t I>
-        using ParamType = typename MethodPointerType<decltype(V)>::ParamType<I>;
-        using MetaType = MethodPointerType<decltype(V)>;
+        using ParamType = typename MetaType::template ParamType<I>::type;
         using ClassType = typename MetaType::ClassType;
         using ReturnType = typename MetaType::ReturnType;
         using PointerType = typename MetaType::PointerType;
@@ -148,11 +152,14 @@ namespace Bs
         static constexpr const std::size_t numParams = MethodPointerType<decltype(V)>::numParams;
         static constexpr PointerType value = V;
 
-        template<typename OTHER_T> constexpr bool operator==(const OTHER_T & other) const
+        template<typename OTHER_T>
+        constexpr bool operator==(const OTHER_T & other) const
         {
             return false;
         }
-        template<auto OV> requires (std::is_same_v<decltype(V),decltype(OV)>) constexpr bool operator==(const MethodPointer<OV> & other) const
+
+        template<auto OV> requires (std::is_same_v<decltype(V),decltype(OV)>)
+        constexpr bool operator==(const MethodPointer<OV> & other) const
         {
             return other.value == this->value;
         }

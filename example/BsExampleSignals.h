@@ -77,21 +77,20 @@ public:
     BS_SIGNAL_TX(MouseEvt);
 
 
-
-
-
     void ready()
     {
         UtilityFunctions::print("MouseDetector: Calling user ready...");
 
         if(area != nullptr)
         {
+
             this->addSignalSource<MouseEnterEvt>(area);
             this->addSignalSource<MouseExitEvt>(area);
         }
     }
 
 };
+
 
 // Declare a 'Mouse Trap', which waits for a signal from the 'Mouse Detector'.
 class MouseTrap : public Node
@@ -126,7 +125,12 @@ class MouseTrap : public Node
     //Add the mouse detector to our list of signal source for 'MouseEvt' events.
     void ready()
     {
-        if(mouseDetector == nullptr){return;}
+        UtilityFunctions::print("MouseTrap: Calling user ready...");
+        if(mouseDetector == nullptr)
+        {
+            godot::UtilityFunctions::print("Error: The member 'mouseDetector' within an instance of type 'MouseTrap' is null.");
+            return;
+        }
         this->addSignalSource<MouseDetector::MouseEvt>(mouseDetector);
     }
 };

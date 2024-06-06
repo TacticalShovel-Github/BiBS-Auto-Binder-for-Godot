@@ -21,11 +21,15 @@ While it is absolutely my intention to show off my l33tcode, I recognize that im
 
 ## Installation
 
-BiBS is header only. You simply need to set your include path to the top level of this repository.  
-    BsExample.cpp is provided as learning material and may not compile on your version of godot.  
+ &emsp; 1. BiBS is header only. You simply need to set your include path to the top level of this repository.  
+ &emsp; &emsp; a. For SCons, this would mean adding `CPP_VPATH_LST += Glob("/path/to/godot-BiBS")` to your SConstruct.  
+ &emsp; 2. (MSVC Users Only) You will need to add the '/permissive','/Zc:preprocessor','/Zc:lambda' directives for your compile to succeed.  
+ &emsp;&emsp; a. This libary requires C-standard preprocessor conformance, which MSVC does not have by default.  
+ &emsp;&emsp; b. For scons, your compiler flags should look like `env.Append(CXXFLAGS=["/std:c++20","/EHsc","/permissive","/Zc:preprocessor","/Zc:lambda"])`
 
-For SCons, this would mean adding `CPP_VPATH_LST += Glob("/path/to/godot-BiBS")` to your SConstruct.  
-For CMake, I don't know. You are better than me and now that's your problem.
+
+
+
 
 ## Requirements
 1. BiBS uses the interface provided by GdExtension. It should also be compatible with the native interface. Either way, one of these need to be acquired separately. Please thank the maintainers at godot for all their hard work.  
@@ -63,12 +67,11 @@ Step 4. Once you have a line number, compare your code with one of the examples.
  &emsp; &emsp; BiBS prioritizes composability with C++, so there are many alternate ways to do things.  
  &emsp; &emsp; If you are new to C++, stick to the syntax in the example until you learn the language better.  
 
-#### Note regarding MSVC debugging  
+#### Note regarding MSVC  
  &emsp; MSVC is very bad at giving useful error logging when templates and macros are involved.  
  &emsp; Unfortunately, both are heavily used in BiBS.  
  &emsp;  
  &emsp; If you have frequent issues with template/macro compile errors, consider switching to GCC(MinGW for Windows users) or Clang.  
- 
 
 You may see certain statements that are, in fact, BiBS trying to tell you that you have made an error.  
  &emsp;  1. `error: static assertion failed: Could not locate index of tag member.`  

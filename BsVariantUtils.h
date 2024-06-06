@@ -58,7 +58,9 @@ namespace Bs
         template<typename T> requires (std::is_floating_point_v<T>) struct VariantCodeFromType<T>{constexpr const static godot::Variant::Type value = godot::Variant::FLOAT;};
 
         //Special Case - godot::Variant::ARRAY
+        template <> struct VariantCodeFromType<godot::Array>{constexpr const static godot::Variant::Type value = godot::Variant::ARRAY;};
         template<typename T> struct VariantCodeFromType<godot::TypedArray<T>>{constexpr const static godot::Variant::Type value = godot::Variant::ARRAY;};
+
 
       /*BS_GD_VARIANT_XLATE(void                      ,godot::Variant::NIL                 ); - Special Case -*/
         BS_GD_VARIANT_XLATE(bool                      ,godot::Variant::BOOL                );
@@ -92,6 +94,9 @@ namespace Bs
         BS_GD_VARIANT_XLATE(godot::PackedVector2Array ,godot::Variant::PACKED_VECTOR2_ARRAY);
         BS_GD_VARIANT_XLATE(godot::PackedVector3Array ,godot::Variant::PACKED_VECTOR3_ARRAY);
         BS_GD_VARIANT_XLATE(godot::PackedColorArray   ,godot::Variant::PACKED_COLOR_ARRAY  );
+
+        template<typename T>
+        constexpr const godot::Variant::Type VcGet=VariantCodeFromType<T>::value;
     }
 }
 

@@ -20,7 +20,7 @@
 /*
     Concatenate together the provided arguements
 */
-#define BS_PP_CAT_0()
+#define BS_PP_CAT_0(...)
 #define BS_PP_CAT_1(x) x
 #define BS_PP_CAT_2_IMPL(x,y) x##y
 #define BS_PP_CAT_2(x,y) BS_PP_CAT_2_IMPL(x,y)

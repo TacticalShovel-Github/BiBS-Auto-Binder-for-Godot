@@ -30,17 +30,17 @@
 
     You may assume this full list from the labels given by the enum, godot::Variant::Type.
 */
-    // Any class marked derived from godot::Object can be marked as BSCLASS, not just nodes.
-    //     The same rules for what you can and cannot export also apply here.
-    class ExampleResourceTuple : public godot::Resource
-    {
-        GDCLASS(ExampleResourceTuple, godot::Resource)
-        BSCLASS;
-        
-        float first = 0.0, second = 0.0;
-        BS_EXPORT(&ExampleResourceTuple::first,.name="first");
-        BS_EXPORT(&ExampleResourceTuple::second,.name="second");
-    };
+// Any class marked derived from godot::Object can be marked as BSCLASS, not just nodes.
+//     The same rules for what you can and cannot export also apply here.
+class ExampleResourceTuple : public godot::Resource
+{
+    GDCLASS(ExampleResourceTuple, godot::Resource)
+    BSCLASS;
+    
+    float first = 0.0, second = 0.0;
+    BS_EXPORT(&ExampleResourceTuple::first,.name="first");
+    BS_EXPORT(&ExampleResourceTuple::second,.name="second");
+};
 
 class DataMemberBindingExample : public godot::Node
 {
@@ -70,16 +70,17 @@ class DataMemberBindingExample : public godot::Node
 
     // You may also export a godot::Array. 
     // Unfortunately, default initializing it is a bit silly.
-    godot::Array gdArray = [](){
+    godot::Array intArray = [](){
         godot::Array ret;
-        for(int i=0;i<256;i++)
+        for(int i=0;i<8;i++)
             ret.push_back(i); 
         return ret;
     }();
+    BS_EXPORT(&DataMemberBindingExample::intArray,.name="intArray");
 
     // godot::TypedArray is derived from godot::Array, which is convertible to godot::Variant, so we may export it.
-    //godot::TypedArray<ExampleResourceTuple> tupleArray;
-    //BS_EXPORT(&DataMemberBindingExample::tupleArray,.name="tupleArray");
+    godot::TypedArray<ExampleResourceTuple> tupleArray;
+    BS_EXPORT(&DataMemberBindingExample::tupleArray,.name="tupleArray");
 };
 
 

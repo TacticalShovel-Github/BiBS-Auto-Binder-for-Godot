@@ -4,6 +4,7 @@
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 
 #include <concepts>
 #include <algorithm>
@@ -20,13 +21,14 @@ namespace godot
     template<typename T> class Ref;
 }
 
+
 #include <BsTemplateUtils.h>
 #include <BsMacroUtils.h>
 #include <BsVariantUtils.h>
 #include <BsTagging.h>
 #include <BsMetaTypes.h>
-
-#include "BsSignal.h"
+#include <BsSignal.h>
+#include <BsContainers.h>
 
 
 namespace Bs
@@ -68,19 +70,6 @@ namespace Bs
             template<typename OBJ_T>
             static void readyTasks(OBJ_T * obj)
             {
-                #if 0
-                //Ensure exported pointers are zeroed at initialization.
-                OBJ_T::template ForEachTagIndex<OBJ_T::template EXPORT>([&]<typename T>(){
-                    if constexpr( decltype(T::data)::typeCode == Bs::EMetaType::MemberPointer)
-                    {
-                        if constexpr (std::is_pointer_v<typename decltype(T::data)::ValueType>)
-                        {
-                            auto ptr = decltype(T::data)::pointer;
-                            obj->*ptr = nullptr;
-                        }
-                    }
-                });
-                #endif
             }
 
             template<typename OBJ_T> static void ready(OBJ_T & obj){}
@@ -102,38 +91,34 @@ namespace Bs
             godot::String ret = str.c_str();
             return ret;
         }
-    } /*namespace Gd*/
 
+
+    } /*namespace Gd*/
+    inline std::string toStd(const godot::String & str)
+    {
+        std::string ret = str.ascii().get_data();
+        return ret;
+    }
+    inline std::string toStd(godot::String && str)
+    {
+        std::string ret = str.ascii().get_data();
+        return ret;
+    }
+    
     #define BS_GD_DESCRIPTION_COMMON(SYMBOL) template<typename T=Default> consteval bool validate() const {return true;}
 
     #define BS_GD_MEMBER_COMMON(SYMBOL) \
-        typedef decltype(SYMBOL)::ValueType   ValueType  ;\
-        typedef decltype(SYMBOL)::ClassType   ClassType  ;\
-        typedef decltype(SYMBOL)::PointerType PointerType;\
-        static constexpr const Bs::EMetaType typeCode = decltype(SYMBOL)::typeCode;\
-        const char * name;\
+        typedef typename decltype(SYMBOL)::ValueType   ValueType  ;\
+        typedef typename decltype(SYMBOL)::ClassType   ClassType  ;\
+        typedef typename decltype(SYMBOL)::PointerType PointerType;\
+        const char * name="";\
         godot::PropertyHint hintOverride = godot::PropertyHint::PROPERTY_HINT_NONE;\
         const char * hintStringOverride=""; \
         godot::PropertyUsageFlags additionUsageFlags = godot::PropertyUsageFlags::PROPERTY_USAGE_DEFAULT;\
         static constexpr PointerType pointer = SYMBOL.value;
-
-    #define BS_GD_BIND_METHODS(...)\
-            const auto getterName = Bs::Gd::godotify(std::string("get") + name);\
-            const auto setterName = Bs::Gd::godotify(std::string("set") + name);\
-            godot::ClassDB::bind_method(godot::D_METHOD(getterName),&ClassType::template get<pointer>);\
-            godot::ClassDB::bind_method(godot::D_METHOD(setterName),&ClassType::template set<pointer>);\
-            godot::ClassDB::add_property(\
-                ClassType::get_class_static(),\
-                godot::PropertyInfo(\
-                    Bs::Gd::VariantCodeFromType<ValueType>::value,\
-                    name __VA_OPT__(,) \
-                    __VA_ARGS__\
-                ),\
-                setterName, getterName\
-            );
     
     template<typename ClassType, auto pointer>
-    void bindMethods(
+    void bindPropertyShared(
         const char * propertyName,
         const godot::PropertyHint & propertyHint,
         const char * hintString,
@@ -166,8 +151,7 @@ namespace Bs
         BS_GD_DESCRIPTION_COMMON(SYMBOL);
         BS_GD_MEMBER_COMMON(SYMBOL);
         void bindMethods() const {
-            BS_GD_BIND_METHODS();
-            //bindMethods<ClassType,pointer>(name,hintOverride,hintStringOverride,additionUsageFlags);
+            bindPropertyShared<ClassType,pointer>(name,hintOverride,hintStringOverride,additionUsageFlags);
         }
     };
 
@@ -177,10 +161,11 @@ namespace Bs
         BS_GD_DESCRIPTION_COMMON(SYMBOL);
         BS_GD_MEMBER_COMMON(SYMBOL);
         void bindMethods() const {
-            BS_GD_BIND_METHODS(
+            bindPropertyShared<ClassType,SYMBOL.value>(
+                name,
                 godot::PropertyHint::PROPERTY_HINT_NODE_TYPE,
                 this->hintStringOverride,
-                this->additionUsageFlags
+                additionUsageFlags
             );
         }
     };
@@ -190,12 +175,14 @@ namespace Bs
     {
         BS_GD_DESCRIPTION_COMMON(SYMBOL);
         BS_GD_MEMBER_COMMON(SYMBOL);
+        
         void bindMethods() const
         {
-            BS_GD_BIND_METHODS(
+            bindPropertyShared<ClassType,SYMBOL.value>(
+                name,
                 godot::PropertyHint::PROPERTY_HINT_RESOURCE_TYPE,
-                Bs::Gd::BaseType<ValueType>::get_class_static()//,
-//                this->additionUsageFlags
+                Bs::toStd(Bs::Gd::BaseType<ValueType>::get_class_static()).c_str(),
+                this->additionUsageFlags
             );
         }
     };
@@ -206,48 +193,109 @@ namespace Bs
         BS_GD_DESCRIPTION_COMMON(SYMBOL);
         BS_GD_MEMBER_COMMON(SYMBOL);
         using ArrayType = ValueType;
-        using ArrayValueType = typename Bs::GetNthTemplateArg<0,ArrayType>::type;
+
         void bindMethods() const {
-            BS_GD_BIND_METHODS(
-            godot::PropertyHint::PROPERTY_HINT_ARRAY_TYPE,
-            godot::vformat(
-                "%s/%s:%s", 
-                godot::Variant::OBJECT, 
-                godot::PropertyHint::PROPERTY_HINT_RESOURCE_TYPE,
-                ArrayValueType::get_class_static()
-            ),
-            this->additionUsageFlags
-        );}
+            if constexpr (Bs::CIsSameBaseType<ArrayType,godot::Array> != true /*We are a typed array*/)
+            {
+                using ArrayValueType = typename Bs::GetNthTemplateArg<0,ArrayType>::type;
+                if constexpr(Bs::Gd::CGdResource<ArrayValueType>)
+                {
+                    
+                    bindPropertyShared<ClassType,SYMBOL.value>(
+                        name,
+                        godot::PropertyHint::PROPERTY_HINT_ARRAY_TYPE,
+                        Bs::toStd(godot::vformat(
+                        "%s/%s:%s", 
+                            godot::Variant::OBJECT,
+                            godot::PropertyHint::PROPERTY_HINT_RESOURCE_TYPE,
+                            Bs::toStd(ArrayValueType::get_class_static()).c_str()
+                        )).c_str(),
+                        this->additionUsageFlags
+                    );
+                }
+                else if constexpr(Bs::Gd::CGdNode<ArrayValueType>)
+                {
+                    bindPropertyShared<ClassType,SYMBOL.value>(
+                        name,
+                        godot::PropertyHint::PROPERTY_HINT_ARRAY_TYPE,
+                        godot::vformat(
+                        "%s/%s:%s", 
+                            godot::Variant::OBJECT,
+                            godot::PropertyHint::PROPERTY_HINT_NODE_TYPE,
+                            Bs::toStd(ArrayValueType::get_class_static()).c_str()
+                        ),
+                        this->additionUsageFlags
+                    );
+                }
+                return;
+            }
+
+            //Default case for arrays
+            bindPropertyShared<ClassType,SYMBOL.value>(
+                name,
+                godot::PropertyHint::PROPERTY_HINT_ARRAY_TYPE,
+                Bs::toStd(godot::vformat(
+                    "%s/%s:%s", 
+                    Bs::Gd::VariantCodeFromType<ValueType>::value,
+                    godot::PropertyHint::PROPERTY_HINT_NONE,
+                    "value"
+                )).c_str(),
+                this->additionUsageFlags
+            );
+        }
     };
+    
 
     template<BS_TAG_TEMPLATE_PREAMBLE, Bs::MemberPointer SYMBOL> requires (std::is_arithmetic_v<typename decltype(SYMBOL)::ValueType>)
     struct MemberDescription<BS_TAG_TEMPLATE_PREAMBLE_NAMES,SYMBOL>
     {
         BS_GD_DESCRIPTION_COMMON(SYMBOL);
         BS_GD_MEMBER_COMMON(SYMBOL);
-        ValueType max = std::numeric_limits<ValueType>::max();
-        ValueType min = std::numeric_limits<ValueType>::min();
+        static constexpr const auto defaultIncrement = GetNth<0,0.01,1>::value;
+        const Ternary<ValueType> max = Ternary<ValueType>::UNDEFINED;
+        const Ternary<ValueType> min = Ternary<ValueType>::UNDEFINED;
+        const typename GetNthType<std::is_floating_point_v<ValueType>,int,float>::type increment = GetNth<std::is_floating_point_v<ValueType>,0,0.1f>::value;
+
         void bindMethods() const
         {
-            BS_GD_BIND_METHODS(
-                this->hintOverride,
-                this->hintStringOverride,
-                this->additionUsageFlags
-            );
+            if(max == max.DEFINED || min == min.DEFINED)
+            {
+                const ValueType propMax = (max == max.DEFINED) ? (ValueType)max : std::numeric_limits<ValueType>::max();
+                const ValueType propMin = (min == min.DEFINED) ? (ValueType)min : std::numeric_limits<ValueType>::min();
+                
+                bindPropertyShared<ClassType,SYMBOL.value>(
+                    name,
+                    godot::PropertyHint::PROPERTY_HINT_RANGE,
+                    std::format(
+                        "{},{},{},or_greater,or_less", 
+                        propMin,
+                        propMax,
+                        increment
+                    ).data(),
+                    this->additionUsageFlags
+                );
+            }
+            else
+            {
+                bindPropertyShared<ClassType,pointer>(name,hintOverride,hintStringOverride,additionUsageFlags);
+            }
         }
     };
 
     template<BS_TAG_TEMPLATE_PREAMBLE, Bs::MethodPointer SYMBOL>
     struct MemberDescription<BS_TAG_TEMPLATE_PREAMBLE_NAMES,SYMBOL>
     {
-        static constexpr const Bs::EMetaType typeCode = decltype(SYMBOL)::typeCode;
         static constexpr const auto MethodLabel = label("Method");
         static constexpr const auto DefaultName = MethodLabel.concatenated(label(Num2Str<index>::value));
         static constexpr const auto numParams = SYMBOL.numParams;
-        static constexpr decltype(SYMBOL)::PointerType pointer = SYMBOL.value;
+        static constexpr typename decltype(SYMBOL)::PointerType pointer = SYMBOL.value;
 
         const char * name = DefaultName.label;
+#ifdef _MSC_VER
+        const std::array<const std::string_view,numParams> args={""};
+#else
         const std::array<const std::string_view,numParams> args;
+#endif
 
         template<typename T>
         consteval bool validate() const
@@ -289,14 +337,25 @@ namespace Bs
     template<BS_TAG_TEMPLATE_PREAMBLE, Bs::FunctionPointer SYMBOL>
     struct MemberDescription<BS_TAG_TEMPLATE_PREAMBLE_NAMES,SYMBOL>
     {
-        BS_GD_DESCRIPTION_COMMON(SYMBOL);
-        static constexpr decltype(SYMBOL)::PointerType pointer = SYMBOL.value;
-        static constexpr const auto numParams = SYMBOL.numParams;
-        using CONTAINING_CLASS_T = typename decltype(CONTAINING_CLASS)::type;
         static constexpr const auto MethodLabel = label("Method");
         static constexpr const auto DefaultName = MethodLabel.concatenated(label(Num2Str<index>::value));
-        const char * name = DefaultName.label;
+        static constexpr const auto numParams = SYMBOL.numParams;
+        static constexpr typename decltype(SYMBOL)::PointerType pointer = SYMBOL.value;
+
+        const std::string_view name = DefaultName.label;
+#ifdef _MSC_VER
+        const std::array<const std::string_view,numParams> args={""};
+#else
         const std::array<const std::string_view,numParams> args;
+#endif
+
+
+        using CONTAINING_CLASS_T = typename decltype(CONTAINING_CLASS)::type;
+        template<typename T>
+        consteval bool validate() const
+        {
+            return true;
+        }
         void bindMethods() const
         {
 
@@ -305,7 +364,7 @@ namespace Bs
                 [&]<typename T, T ... Is>(std::integer_sequence<T, Is...>){
                     godot::ClassDB::bind_static_method(
                         CONTAINING_CLASS_T::get_class_static(),
-                        godot::D_METHOD(name,args[Is].data() ...),
+                        godot::D_METHOD(name.data(),args[Is].data() ...),
                         pointer
                     );
                 }(std::make_integer_sequence<std::size_t,numParams>{});
@@ -314,7 +373,7 @@ namespace Bs
             {
                 godot::ClassDB::bind_static_method(
                     CONTAINING_CLASS_T::get_class_static(),
-                    godot::D_METHOD(name),
+                    godot::D_METHOD(godot::StringName(name.data())),
                     pointer
                 );
             }
@@ -341,7 +400,6 @@ namespace Bs
 
 
 } /*namespace Bs*/
-
 
 
 

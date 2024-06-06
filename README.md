@@ -27,10 +27,6 @@ While it is absolutely my intention to show off my l33tcode, I recognize that im
  &emsp;&emsp; a. This libary requires C-standard preprocessor conformance, which MSVC does not have by default.  
  &emsp;&emsp; b. For scons, your compiler flags should look like `env.Append(CXXFLAGS=["/std:c++20","/EHsc","/permissive","/Zc:preprocessor","/Zc:lambda"])`
 
-
-
-
-
 ## Requirements
 1. BiBS uses the interface provided by GdExtension. It should also be compatible with the native interface. Either way, one of these need to be acquired separately. Please thank the maintainers at godot for all their hard work.  
     GdExtension Users: https://github.com/godotengine/godot-cpp  

@@ -1,17 +1,18 @@
-[gd_scene load_steps=7 format=3 uid="uid://spn77if5gfvf"]
+[gd_scene load_steps=8 format=3 uid="uid://spn77if5gfvf"]
 
 [sub_resource type="Environment" id="Environment_srccd"]
 ambient_light_source = 2
 ambient_light_color = Color(0.921569, 0.921569, 0.921569, 1)
 reflected_light_source = 2
 
-[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_rc38e"]
-first = 5.0
-second = 10.0
+[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_0tv2n"]
+second = 15.0
 
-[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_g6cyy"]
-first = 15.0
-second = 20.0
+[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_14se7"]
+first = 5.0
+
+[sub_resource type="ExampleResourceTuple" id="ExampleResourceTuple_6qapb"]
+second = 4.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_dlyo6"]
 
@@ -29,7 +30,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.01353)
 
 [node name="DataMemberBindingExample" type="DataMemberBindingExample" parent="PropertiesExample" node_paths=PackedStringArray("Area")]
 Area = NodePath("../Area3D")
-tupleArray = Array[ExampleResourceTuple]([SubResource("ExampleResourceTuple_rc38e"), SubResource("ExampleResourceTuple_g6cyy")])
+tupleArray = Array[ExampleResourceTuple]([SubResource("ExampleResourceTuple_0tv2n"), SubResource("ExampleResourceTuple_14se7"), SubResource("ExampleResourceTuple_6qapb")])
 
 [node name="Area3D" type="Area3D" parent="PropertiesExample"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.41315, 0, 0)

@@ -95,7 +95,10 @@ namespace Bs
         void BS_ARBITRARY_METHOD(){} \
         using BS_SELF_TYPE = typename Bs::MemberPointerType<decltype(&BS_ARBITRARY_METHOD)>::ClassType; \
         template<auto MBR_PTR> void set(typename Bs::MemberPointer<MBR_PTR>::ValueType value) { Bs::MemberPointer<MBR_PTR>::set(*this,value); } \
+        template<auto MBR_PTR> void setR(const typename Bs::MemberPointer<MBR_PTR>::ValueType & value) { Bs::MemberPointer<MBR_PTR>::set(*this,value); } \
         template<auto MBR_PTR> typename Bs::MemberPointer<MBR_PTR>::ValueType get() { return Bs::MemberPointer<MBR_PTR>::get(*this); } \
+        template<auto MBR_PTR,typename VT = typename Bs::MemberPointer<MBR_PTR>::ValueType> void set2(VT value) { Bs::MemberPointer<MBR_PTR>::set(*this,value); } \
+        template<auto MBR_PTR,typename VT = Bs::MemberPointer<MBR_PTR>::ValueType> VT get2() { return Bs::MemberPointer<MBR_PTR>::get(*this); } \
         template<template <size_t, class> class TAG_T,typename FNC_PNTR_T> \
         static constexpr void ForEachTagIndex(FNC_PNTR_T fnc) \
         { \

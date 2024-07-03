@@ -5,25 +5,6 @@ namespace Bs
 {
     namespace Gd
     {
-        template<typename T> struct SRemoveGdRef{using Type = T;};
-
-        template<typename T> struct SRemoveGdRef<godot::Ref<T>>{using Type = T;};
-        template<typename T> struct SRemoveGdRef<const godot::Ref<T>>{using Type = T;};
-        template<typename T> struct SRemoveGdRef<godot::Ref<T> &>{using Type = T;};
-        template<typename T> struct SRemoveGdRef<const godot::Ref<T> &>{using Type = T;};
-        template<typename T> struct SRemoveGdRef<godot::Ref<T> &&>{using Type = T;};
-        template<typename T> struct SRemoveGdRef<const godot::Ref<T> &&>{using Type = T;};
-        template<typename T> using RemoveGodotRef = SRemoveGdRef<T>::Type;
-        template<typename T> using BaseType = ::Bs::BaseType<RemoveGodotRef<T>>;
-
-        template<typename U, typename V> concept SameBaseType = std::is_same_v<BaseType<U>,BaseType<V>>;
-        template<typename T> concept CGdNode = std::derived_from<BaseType<T>,godot::Node>;
-        template<typename T> concept CGdResource = std::derived_from<BaseType<T>,godot::Resource>;
-        template<typename T> concept CGdArray = std::derived_from<BaseType<T>,godot::Array>;
-        template<typename T> concept CGdVector = Bs::SameTemplate<T,godot::Vector>::value;
-        template<typename T> concept CGdPseudoArray = CGdArray<T> || CGdVector<T>;
-        template<typename T> concept CUserDefinedType = requires(T x){x.BS_ARBITRARY_METHOD();};
-
         #define BS_GD_VARIANT_XLATE(FROM,TO) \
             template<> struct VariantCodeFromType<FROM> \
             { \
@@ -53,6 +34,8 @@ namespace Bs
 
         //Special Case - godot::Variant::INT
         template<typename T> requires (std::is_integral_v<T>) struct VariantCodeFromType<T>{constexpr const static godot::Variant::Type value = godot::Variant::INT;};
+        template<typename T> requires (std::is_enum_v<T>) struct VariantCodeFromType<T>{constexpr const static godot::Variant::Type value = godot::Variant::INT;};
+        template<typename T> requires (CBsEnumType<T>) struct VariantCodeFromType<T>{constexpr const static godot::Variant::Type value = godot::Variant::INT;};
 
         //Special Case - godot::Variant::FLOAT
         template<typename T> requires (std::is_floating_point_v<T>) struct VariantCodeFromType<T>{constexpr const static godot::Variant::Type value = godot::Variant::FLOAT;};

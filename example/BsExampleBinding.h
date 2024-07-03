@@ -25,6 +25,7 @@
             (b.) godot::String
             (c.) godot::NodePath
         (5.) Arrays
+        (6.) Enums
         
         .. and so forth.
 
@@ -90,6 +91,11 @@ class DataMemberBindingExample : public godot::Node
     float boundedFloat = 0.0f;
     BS_EXPORT(&DataMemberBindingExample::boundedFloat,.name="boundedFloat",.min=-15.0f,.max=10.0f);
 
+    //Enums can be exported if declared as the following...
+    BS_ENUM(ExampleEnum_t,Red,Blue,Green);
+
+    ExampleEnum_t enumMember = ExampleEnum_t::Blue;
+    BS_EXPORT(&DataMemberBindingExample::enumMember,.name = "enumMember");
 };
 
 

@@ -3,7 +3,8 @@
 
 
 
-
+typedef void BS_SELF_TYPE;
+class BsEnum{};
 #include "BsDescriptions.h"
 
 /*

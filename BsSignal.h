@@ -97,13 +97,6 @@ namespace Bs
             LogBS::write("done");
         }
     }; /*class Signal*/
-
-
-//    template<Bs::Literal NAME, auto ... ARGs>
-//    template<typename OBJ_T, typename ... Ts>
-//    Signal<Name,ARGs>::emit<OBJ_T,Ts ...>(OBJ_T * tx, Ts ... args){}
-
-
-}
+} /*namespace Bs*/
 
 #endif

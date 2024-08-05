@@ -50,6 +50,91 @@ namespace Bs
     };
 
 
+    template<template <size_t, class> class TAG_T,typename OBJ_T,typename FNC_PNTR_T>
+    static constexpr void ForEachMember(OBJ_T & obj,FNC_PNTR_T fnc)
+    {
+        Bs::ForEach< Bs::CtTagCount<TAG_T> >([&](auto i){
+            using COMPLETED_TAG = TAG_T<i.value,OBJ_T>;
+            using DATA_T = decltype(COMPLETED_TAG::data);
+            using VALUE_TYPE = typename DATA_T::ValueType;
+            fnc(COMPLETED_TAG::data.name ,DATA_T::template get<VALUE_TYPE>(obj));
+        });
+    }
+
+    template<template <size_t, class> class TAG_T,typename OBJ_T,typename FNC_PNTR_T>
+    static constexpr void ForEachMember(const OBJ_T & obj,FNC_PNTR_T fnc)
+    {
+        Bs::ForEach< Bs::CtTagCount<TAG_T> >([&](auto i){
+            using COMPLETED_TAG = TAG_T<i.value,OBJ_T>;
+            using DATA_T = decltype(COMPLETED_TAG::data);
+            using VALUE_TYPE = typename DATA_T::ValueType;
+            fnc(COMPLETED_TAG::data.name ,DATA_T::template get<VALUE_TYPE>(obj));
+        });
+    }
+
+    #define BS_FOR_EACH_MEMBER(TAG_T,VAR_OBJ,...) Bs::ForEachMember<::Bs::BaseType<decltype(VAR_OBJ)>::template TAG_T>(VAR_OBJ,__VA_ARGS__);
+
+    template<template <size_t, class> class TAG_T,typename OBJ_T,typename FNC_PNTR_T>
+    static constexpr void ForEachMember(const OBJ_T * obj,FNC_PNTR_T fnc)
+    {
+        ForEachMember<TAG_T,OBJ_T,FNC_PNTR_T>(*obj,fnc);
+    }
+
+    template<template <size_t, class> class TAG_T,typename OBJ_T,typename FNC_PNTR_T>
+    static constexpr void ForEachMember(OBJ_T * obj,FNC_PNTR_T fnc)
+    {
+        ForEachMember<TAG_T,OBJ_T,FNC_PNTR_T>(*obj,fnc);
+    }
+
+    template<template <size_t, class> class TAG_T,typename OBJ_T,typename FNC_PNTR_T>
+    static constexpr void ForEachMemberPointer(const OBJ_T * obj,FNC_PNTR_T fnc)
+    {
+        Bs::ForEach< Bs::CtTagCount<TAG_T> >([&](auto i){
+            using COMPLETED_TAG = TAG_T<i.value,OBJ_T>;
+            using DATA_T = decltype(COMPLETED_TAG::data);
+            using PointerType = typename DATA_T::PointerType;
+            fnc(COMPLETED_TAG::data.pointer);
+        });
+    }
+
+    template<template <size_t, class> class TAG_T,typename OBJ_T>
+    constexpr std::vector<const char *> memberNames(const OBJ_T & obj)
+    {
+        std::vector<const char *> ret;
+        Bs::ForEachMember<TAG_T>(obj,[&](const char * name,const auto & value){
+            ret.push_back(name);
+        });
+        return ret;
+    }
+    
+    template<template <size_t, class> class TAG_T,typename OBJ_T>
+    constexpr std::vector<const char *> memberNames(const OBJ_T * obj)
+    {
+        return memberNames(*obj);
+    }
+
+    template<template <size_t, class> class TAG_T,typename OBJ_T>
+    std::string toJson(const OBJ_T & obj)
+    {
+        std::stringstream s;
+        s << "{";
+        Bs::ForEachMember<TAG_T>(obj,[&](const char * name,const auto & value){
+            s << name << ":" << value << ",";
+        });
+        std::string ret = s.str();
+        ret.pop_back();
+        ret += "}";
+        return ret;
+    }
+
+    template<template <size_t, class> class TAG_T>
+    concept CHasTag = (::Bs::CtTagCount<TAG_T> > 0);
+
+    template<template <size_t, class> class TAG_T>
+    concept CHasMonoTag = (::Bs::CtTagCount<TAG_T> == 1);
+
+    #define BS_HAS_TAG(OBJ_T,TAG_T) (::Bs::CHasTag<OBJ_T::template TAG_T>)
+    #define BS_HAS_MONO_TAG(OBJ_T,TAG_T) (::Bs::CHasMonoTag<OBJ_T::template TAG_T>)
 
     /////////////////////////////
     //Preprocessor Syntax Sugar//
@@ -59,10 +144,35 @@ namespace Bs
     #define BS_TAG_COUNT(TAG_NAME) Bs::CtTagCount<TAG_NAME>
     #define BS_QUALIFIED_TAG_COUNT(TAG_NAME,PRED) Bs::CtTagCount<TAG_NAME>
 
-    #define BS_DECLARE_TAG(TAG_NAME,DATA_T) \
+    template<BS_TAG_TEMPLATE_PREAMBLE, Bs::MemberPointer SYMBOL>
+    struct DefaultTag
+    {
+        const char * name;
+        using ValueType = typename decltype(SYMBOL)::ValueType;
+        using PointerType = typename decltype(SYMBOL)::PointerType;
+        using ContainingClass = typename decltype(CONTAINING_CLASS)::type;
+        static constexpr PointerType pointer = decltype(SYMBOL)::value;
+        template<typename U,typename OBJ_T>
+        static const U & get(const OBJ_T & obj){return SYMBOL.get(obj);}
+
+        template<typename T>
+        consteval bool validate() const { return true; }
+    };
+    
+    #define BS_DECLARE_TAG_DATA_IMPL() ::Bs::DefaultTag
+    #define BS_DECLARE_TAG_DATA_IMPL_OPTS()
+
+    #define BS_DECLARE_TAG_DATA(TAG_NAME,DATA_T) \
         template <size_t I, class T> struct TAG_NAME; \
         template<auto ... TEMPLATE_PARAMs> \
         using TAG_NAME##_DATA = DATA_T<TEMPLATE_PARAMs...>;
+
+    #define BS_DECLARE_TAG(TAG_NAME,...) \
+        BS_DECLARE_TAG_DATA(TAG_NAME, \
+        BS_CAT(\
+            BS_DECLARE_TAG_DATA_IMPL __VA_OPT__(,) \
+            __VA_OPT__(_OPTS) \
+        )() __VA_ARGS__)
 
     #define BS_TAG_COMMON(TAG_NAME,SYMBOLS,IDX_NAME,ARGS) \
         static constexpr size_t BS_CAT(BS_RF_MBR_IDX_,IDX_NAME,TAG_NAME) = Bs::CtCounter<struct BS_CAT(BS_RF_MBR_TAG_,IDX_NAME,TAG_NAME),TAG_NAME>::value; \
@@ -83,6 +193,8 @@ namespace Bs
         ARGS \
     )
 
+    #define BS_TAG_MEMBER(TAG_NAME,MEMBER,...)    BS_TAG(TAG_NAME,BS_WRAP(Bs::symbol<&BS_SELF_TYPE::MEMBER>()),BS_WRAP(#MEMBER __VA_OPT__(,)__VA_ARGS__))
+
 //            constinit const static bool validated = decltype(data)::validate<Bs::Override>(data); \
 
 
@@ -90,7 +202,7 @@ namespace Bs
     //Class Header Stamp//
     //////////////////////
 
-    #define BSCLASS_DETAILS \
+    #define BS_TAGGED_CLASS \
     public: \
         void BS_ARBITRARY_METHOD(){} \
         using BS_SELF_TYPE = typename Bs::MemberPointerType<decltype(&BS_ARBITRARY_METHOD)>::ClassType; \
@@ -107,15 +219,13 @@ namespace Bs
             }); \
         } \
         \
-        \
         template<template <size_t, class> class TAG_T,auto V,typename FNC_PNTR_T> \
         static constexpr void ForTag(FNC_PNTR_T fnc) \
         { \
             constexpr const std::size_t tagIndex = Bs::indexOfTagMember<BS_SELF_TYPE,TAG_T,V>(); \
             fnc.template operator()<TAG_T<tagIndex,BS_SELF_TYPE>>(); \
             static_assert(tagIndex != (std::size_t)-1,"Could not locate index of tag member."); \
-        } \
-    private:
+        }
 
 } //namespace Bs
 

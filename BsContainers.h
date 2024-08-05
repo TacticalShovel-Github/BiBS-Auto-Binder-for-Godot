@@ -69,6 +69,11 @@ namespace Bs
             return other == this->psuedoValue;
         }
 
+        constexpr PsuedoValue getPsuedoValue()
+        {
+            return this->psuedoValue;
+        }
+
         constexpr void setPsuedoValue(const PsuedoValue & other)
         {
             this->psuedoValue = other;
@@ -76,6 +81,26 @@ namespace Bs
         constexpr T get() const
         {
             return value;
+        }
+
+        constexpr T & get()
+        {
+            return value;
+        }
+
+        constexpr bool isDefined() const
+        {
+            return psuedoValue == DEFINED;
+        }
+        
+        template<typename U=T> requires (CBsHasToString<U>)
+        constexpr std::string toString() const
+        {
+            if(psuedoValue == DEFINED)
+            {
+                return value.toString();
+            }
+            return std::string("UNDEFINED");
         }
 
     public:

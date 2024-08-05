@@ -29,9 +29,11 @@ namespace Bs
         template<typename T> concept CGdPrimative = (!CGdVector<T> && !CGdObject<T>);
 
     } //namespace Gd
-
+    template<typename T> concept CBsHasToString = requires(T x){x.toString();};
     template<typename T> concept CBsUserType = requires(T x){x.BS_ARBITRARY_METHOD();};
     template<typename T> concept CBsEnumType = std::derived_from<T,BsEnum>;
+
+
 
 } //namespace Bs
 #endif

@@ -12,6 +12,7 @@
 #include <format>
 #include <cassert>
 #include <fstream>
+#include <sstream>
 
 namespace godot
 {
@@ -419,6 +420,8 @@ namespace Bs
         const Ternary<ValueType> min = Ternary<ValueType>::UNDEFINED;
         const Ternary<ValueType> max = Ternary<ValueType>::UNDEFINED;
         const typename GetNthType<std::is_floating_point_v<ValueType>,float,float>::type increment = GetNth<std::is_floating_point_v<ValueType>,0.1f,0.01f>::value;
+        Ternary<decltype(&ClassType::template get<pointer>)> getPtr;
+        Ternary<decltype(&ClassType::template set<pointer>)> setPtr;
 
         void bindMethods() const
         {
@@ -427,21 +430,24 @@ namespace Bs
                 const ValueType propMax = (max == max.DEFINED) ? (ValueType)max : std::numeric_limits<ValueType>::max();
                 const ValueType propMin = (min == min.DEFINED) ? (ValueType)min : std::numeric_limits<ValueType>::min();
                 
-                bindPropertyShared<ClassType,SYMBOL.value>(
-                    name,
-                    godot::PropertyHint::PROPERTY_HINT_RANGE,
+                bindPropertySharedTern<ClassType,SYMBOL.value>(
+                    name,hintOverride,
                     std::format(
                         "{},{},{},or_greater,or_less", 
                         propMin,
                         propMax,
                         increment
                     ).data(),
-                    this->additionUsageFlags
-                );
+                    additionUsageFlags,
+                    getPtr,setPtr);
             }
             else
             {
-                bindPropertyShared<ClassType,pointer>(name,hintOverride,hintStringOverride,additionUsageFlags);
+                bindPropertySharedTern<ClassType,SYMBOL.value>(
+                    name,hintOverride,
+                    hintStringOverride,
+                    additionUsageFlags,
+                    getPtr,setPtr);
             }
         }
     };

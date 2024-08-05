@@ -11,7 +11,7 @@ class BsEnum{};
     React to godot interactions
 */
 #define BSCLASS \
-    BSCLASS_DETAILS \
+    BS_TAGGED_CLASS \
     public: \
         BS_DECLARE_TAG(METHOD,Bs::MemberDescription); \
         BS_DECLARE_TAG(EXPORT,Bs::MemberDescription); \

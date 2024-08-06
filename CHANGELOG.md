@@ -1,3 +1,8 @@
+## Version 1.3a
+### Features
+&emsp;Add support for exporting normal (0-indexed) enumerations.
+&emsp;Partial support for manually overriding getters and setters.
+
 ## Version 1.2a
 ### Features
 &emsp;Add godot project, with gdextension module, to the example  

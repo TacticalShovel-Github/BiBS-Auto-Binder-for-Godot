@@ -96,6 +96,12 @@ These are some other compiler errors to look out for, and what they mean
  `Syntax |DESIGNATOR|` declares `|DESIGNATOR|` as a symbol that may resolve to one or more expressions.  
   &emsp; Every expression following a syntax declaration is a possible completion of the designator.
 
+#### Syntax Placeholders
+ The `|DESIGNATOR|` of a `Syntax` appearing within a placeholder is a reference to the syntax tree of that `Syntax`.
+
+#### Optional Placeholders
+ A syntax placeholder appearing as `|?DESIGNATOR?|` is an optional occurence of that syntax tree.
+
 #### Patterns
  The first member of a pattern will appear as `|PLACEHOLDER[_0]|`.  
  The following occurence of `|OPERATOR| ...[PLACEHOLDER] |OPERATOR|` denotes an expansion of that pattern.  
@@ -132,9 +138,20 @@ These are some other compiler errors to look out for, and what they mean
      #Normal case
      BS_EXPORT(|MEMBER_POINTER|, .name="|MEMBER_NAME|");
 
+     #With Options
+     BS_EXPORT(|MEMBER_POINTER|, .name="|MEMBER_NAME|", |OPTIONAL_USAGE_FLAGS|, |OPTIONAL_GET_PTR|, |OPTIONAL_SET_PTR|);
+
+ Syntax |OPTIONAL_USAGE_FLAGS|
      #For a member with manually defined usage flags
      BS_EXPORT(|MEMBER_POINTER|, .name="|MEMBER_NAME|", .additionUsageFlags = |USAGE_FLAG[_0]| bitor ... bitor |USAGE_FLAG[_N]| );
 
+ Syntax |OPTIONAL_GET_PTR|
+     #For a member with manually defined getter
+     BS_EXPORT(|MEMBER_POINTER|, .name="|MEMBER_NAME|", .getPtr = |METHOD_POINTER|);
+
+ Syntax |OPTIONAL_SET_PTR|
+     #For a member with manually defined setter
+     BS_EXPORT(|MEMBER_POINTER|, .name="|MEMBER_NAME|", .setPtr = |METHOD_POINTER|);
      
 ```
 ```
@@ -172,4 +189,9 @@ These are some other compiler errors to look out for, and what they mean
                                                                      
      BS_SIGNAL_RX( |SIGNAL_ALIAS|, .name = |SIGNAL_STRING_NAME|, .callback = "|SIGNAL_NAME|" );   
 
+```
+```
+ Syntax |ENUM_DECLARATION|
+    
+    BS_ENUM(|ENUM_TYPE_NAME|,|ENUM_LABEL[_0]|, ... ,|ENUM_LABEL[_N]|); 
 ```
